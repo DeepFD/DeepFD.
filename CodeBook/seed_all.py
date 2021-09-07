@@ -1,14 +1,14 @@
 import os
-from Utils.Utils import *
-from Utils.Module import *
+from CodeBook.Utils.Utils import *
+from CodeBook.Utils.Module import *
 from keras.models import load_model
 import argparse
 import pickle
 import random
 import importlib
-from Config import params
-from SeedFaults.seedFaults import seed_single_fault, seed_multi_fault
-from Config import FAULT_TYPE
+from CodeBook.Config import params
+from CodeBook.SeedFaults.seedFaults import seed_single_fault, seed_multi_fault
+from CodeBook.Config import FAULT_TYPE
 import pandas as pd
 from itertools import combinations
 
@@ -17,7 +17,7 @@ sys.path.append('./Utils')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run programs.')
-    parser.add_argument('--base', '-bs', default='./RQ2', help='Base directory. Default: ./RQ2/')
+    parser.add_argument('--base', '-bs', default='./Evaluation', help='Base directory. Default: ./RQ2/')
     parser.add_argument('--dataset', '-ds', default='MNIST', help="Dataset.",
                         choices=["MNIST", "MNIST2", "CIFAR-10", "Blob", "Circle", "Reuters", "IMDB"])
     parser.add_argument('--seed_fault', '-sf', default=0, type=int,

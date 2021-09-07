@@ -2,11 +2,11 @@ import os
 import random
 import pickle
 from copy import deepcopy
-import Repair.repair as rp
+import CodeBook.Repair.repair as rp
 import keras.optimizers as O
-from Config import *
+from CodeBook.Config import *
 from keras.engine.saving import load_model
-from Analyzer.ASTParser import traverse
+from CodeBook.Analyzer.ASTParser import traverse
 
 
 def index_faults(faults_dict: dict):

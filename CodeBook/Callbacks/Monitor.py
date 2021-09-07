@@ -6,11 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import keras
 import datetime
-from Utils.TimeCounter import TimeHistory
 from keras.models import load_model, Sequential
 import keras.backend as K
 import tensorflow as tf
-from Utils.Logger import Logger
+from CodeBook.Utils.Logger import Logger
 import keras.backend as K
 import copy
 import time

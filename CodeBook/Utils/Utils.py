@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 import csv
 import numpy as np
 import keras
-from Utils.TimeCounter import TimeHistory
+from CodeBook.Utils.TimeCounter import TimeHistory
 from keras.models import load_model
-from Callbacks.LossHistory import LossHistory
-from Utils.Logger import Logger
+from CodeBook.Callbacks.LossHistory import LossHistory
+from CodeBook.Utils.Logger import Logger
 
 logger = Logger()
 from keras.callbacks import ModelCheckpoint
 import pickle
 import time
-import Utils.Module as md
+import CodeBook.Utils.Module as md
 
 
 # default_param = {'beta_1': 1e-3,

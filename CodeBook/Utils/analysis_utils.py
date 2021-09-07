@@ -88,60 +88,12 @@ def convert_bool2int(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def cal_metrics_voting(ground_truth, predict_list, LABEL_DICT):
+def cal_metrics_voting(predict_list):
     # shape of predict_list (n_classifier, n_label)
     predict_list = np.array(predict_list)
-    threshold = predict_list.shape[0] / 2
+    # threshold = predict_list.shape[0] / 2
     threshold = 1
+    # get union of the diagnosed faults
     pred_voting = (np.sum(predict_list, axis=0) >= threshold).astype(int)  # if # of 1 > # of 0 -> 1, else -> 0
-    accuracy, precision, recall, FScore = cal_metrics(ground_truth, [pred_voting], LABEL_DICT)
-    return accuracy, precision, recall, FScore, pred_voting
+    return pred_voting
 
-
-def cal_metrics(ground_truth, predict_list, LABEL_DICT):
-    TP, TN, FN, FP = 0, 0, 0, 0
-    # debug only
-    # print("ground truth is: ", ground_truth)
-    # print("predict_list is: ", predict_list)
-    # log the number of misclassification on the target label
-    # shape of ground_truth: (5, )
-    # shape of predict_list: (n_classifier, 5)
-    for pred in predict_list:
-        i = 0
-        for g, p in zip(ground_truth, pred):
-            if g == 1 and p == 1:
-                TP += 1
-                LABEL_DICT[i]["TP"] += 1
-                LABEL_DICT[i]["P"] += 1
-            if g == 1 and p == 0:
-                FN += 1
-                LABEL_DICT[i]["FN"] += 1
-                LABEL_DICT[i]["N"] += 1
-            if g == 0 and p == 1:
-                FP += 1
-                LABEL_DICT[i]["FP"] += 1
-                LABEL_DICT[i]["P"] += 1
-            if g == 0 and p == 0:
-                TN += 1
-                LABEL_DICT[i]["TN"] += 1
-                LABEL_DICT[i]["N"] += 1
-            i += 1
-    if TP + TN + FN + FP != 0:
-        accuracy = (TP + TN) / (TP + TN + FN + FP)
-    else:
-        accuracy = 0
-    if TP + FP != 0:
-        precision = TP / (TP + FP)
-    else:
-        precision = 0
-    if TP + FN != 0:
-        recall = TP / (TP + FN)
-    else:
-        recall = 0
-    if precision + recall == 0:
-        FScore = 0
-    else:
-        FScore = (2 * precision * recall) / (precision + recall)
-    # print("accuracy: {:4f} | precision: {:4f} | recall: {:4f} | FScore: {:4f}".format(accuracy, precision, recall,
-    #                                                                                   FScore))
-    return accuracy, precision, recall, FScore

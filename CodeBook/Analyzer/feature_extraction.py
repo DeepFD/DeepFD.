@@ -2,12 +2,12 @@ import os
 import pandas as pd
 from collections import defaultdict
 from datetime import datetime
-import Repair.repair as rp
+import CodeBook.Repair.repair as rp
 from copy import deepcopy
 import argparse
-from Config import *
-from Utils.analysis_utils import has_enough_feature, has_enough_sample, convert_bool2int
-from Utils.FileHandler import read_csv
+from CodeBook.Config import *
+from CodeBook.Utils.analysis_utils import has_enough_feature, has_enough_sample, convert_bool2int
+from CodeBook.Utils.FileHandler import read_csv
 
 
 def _severity_val(exp: float, real: float) -> float:

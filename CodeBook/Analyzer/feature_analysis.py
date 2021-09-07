@@ -1,12 +1,12 @@
 import os
 import pandas as pd
 from sklearn.decomposition import PCA
-from Utils.FileHandler import find_file_by_suffix
+from CodeBook.Utils.FileHandler import find_file_by_suffix
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.feature_selection import SelectKBest, chi2
-from MultiLabelClassification.MultiLabelClassifier import label_encoding
+from CodeBook.MultiLabelClassification.MultiLabelClassifier import label_encoding
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC

@@ -8,7 +8,7 @@ In particular, it infers the **suspicious fault types** via monitoring the runti
 
 ## Workflow of DeepFD
 
-![workflow](./Figures/workflow.png)
+![workflow](/Users/bella/PycharmProjects/New/DeepFD/Figures/workflow.png)
 
 
 
@@ -34,7 +34,7 @@ After acquiring the diagnosed types of faults, DeepFD performs fault localizatio
 
 ## Diagnosis Model Construction
 
-![model-prep](./Figures/model-prep.png)
+![model-prep](/Users/bella/PycharmProjects/New/DeepFD/Figures/model-prep.png)
 
 ### Step 1: Fault Seeding. 
 
@@ -59,6 +59,7 @@ We treat the fault diagnosis as a multi-label classification problem mapping a f
 ### Prerequisite
 
 - Python 3.6 +
+- Packages:
 
 ```shell
 pip install -r requirements.txt
@@ -68,20 +69,129 @@ pip install -r requirements.txt
 
 ### Fault Diagnosis and Localization
 
+- Run the script
+
 ```shell
-python predict.py
+python CodeBook/predict.py
 ```
+
+
+
+- Example output
+
+```shell
+====================
+Working on case: 
+working on subject:  59282996
+The ground truth faults: ['epoch']
+Diagnosed / Localized by DeepFD:
+Fault 1: [epoch], Lines: [309]
+case end 
+====================
+
+
+====================
+Working on case: 
+working on subject:  31556268
+The ground truth faults: ['lr', 'loss', 'epoch']
+Diagnosed / Localized by DeepFD:
+Fault 1: [lr], Lines: [17]
+Fault 2: [act], Lines: [11, 13]
+Fault 3: [loss], Lines: [19]
+Fault 4: [epoch], Lines: [34]
+case end 
+====================
+
+```
+
+
+
+## Benchmark
+
+- Under the folder `Benchmark/Subjects`, there are two subjects.
+
+- The statistics, patches, detailed information of all benchmarks can be found at `Benchmark/Subjects/Benchmark-with-patches.xlsx`
+- The evaluation statistics can be found at ``Benchmark/Subjects/Evaluation.xlsx`
+- The entire benchmark with runtime information and extracted features can be downloaded [here](https://drive.google.com/drive/folders/1JddnrUPy1cqM5XAVwAye6aeE-FVl_qoa?usp=sharing). 
+
+
+
+## Other Functions
+
+### Feature Extraction from Runtime Information
+
+- Script
+
+```shell
+python CodeBook/feature_extraction.py
+```
+
+- Output
+  - `summary.csv` under folder (specified by `-pd`)
+  - `summary_dict.csv` under folder (specified by `-pd`)
+  - `stats.csv` in each sub-folder (specified by `-ds`)
 
 
 
 ### Fault Seeding
 
+- Prepare original dataset
+  - Download from dataset provided [here](https://conf.researchr.org/details/icse-2021/icse-2021-papers/81/AUTOTRAINER-An-Automatic-DNN-Training-Problem-Detection-and-Repair-System).
+  - Download into folder `Evaluation`, sub-folders inside including `MNIST`, `CIFAR-10`, etc.
 
+- Generate mutant
+
+```shell
+python CodeBook/seed_all.py --base Evaluation --dataset MNIST -sf 1 --fault_type loss ----max_fault 2
+```
+
+The example seeds 2 faults in type of `loss` for each DNN model under `Evaluation/MNIST`.
+
+
+
+- Run all the mutants and collect runtime information
+
+```shell
+python CodeBook/run_all.py --base Evaluation --dataset MNIST --gpu 0 --run 1 --max_iter 1
+```
+
+The example runs each generated mutant once, together with original one under `Evaluation/MNIST`, without using GPU.
+
+
+
+- Extract features and labeling
+
+```shell
+python CodeBook/feature_extraction.py
+```
 
 
 
 ## Project Structure
 
+```shell
+DeepFD
+├── Classifiers  # The pretrained diagnosis models
+│   └── All
+├── CodeBook     # code
+│   ├── Analyzer
+│   ├── Callbacks
+│   ├── Config.py
+│   ├── MultiLabelClassification
+│   ├── SeedFaults
+│   ├── Utils
+│   ├── feature_extraction.py
+│   ├── predict.py
+│   ├── run_all.py
+│   └── seed_all.py
+├── Benchmark   # Benchmarks
+│   └── Subjects
+├── Figures			# Figures for README
+│   ├── model-prep.png
+│   └── workflow.png
+├── README.md		
+└── requirements.txt  # requirements to be installed by pip
+```
 
 
 

@@ -25,7 +25,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import sys
 
 sys.path.append("./")
-from CodeBook.Utils.analysis_utils import cal_metrics, cal_metrics_voting
+from CodeBook.Utils.analysis_utils import cal_metrics_voting
 from CodeBook.Analyzer.lineLoc import lineLoc
 
 
@@ -71,7 +71,7 @@ def generateReport(dataset, label_dict):
     # shape of label_dict: {0: {"TP":xx, "TF":xx,...}, 1: {..}.., ..}
     df = pd.DataFrame.from_dict(label_dict)
     dataset = dataset.split("/")[1]
-    outdir = './logs'
+    outdir = './Logs'
     if not os.path.exists(outdir):
         os.mkdir(outdir)
     df.to_csv("{}/{}_label.csv".format(outdir, dataset))
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     base_dir = os.path.join(program_dir, dataset_dir)
 
     # print out the dataset name
-    print("\n\n=================================\nWorking on model: {}".format(args.model_dir))
+    # print("\n\n=================================\nWorking on model: {}".format(args.model_dir))
 
     # read csv
     df = pd.read_csv(os.path.join(base_dir, file))
@@ -125,26 +125,18 @@ if __name__ == '__main__':
     else:
         print("Use all iteration.")
 
-    # print("Num of Fault:\n", df["num_fault"].describe())
-    # df = df[df["num_fault"] >= 1]
-    # print("Fault >= 1, shape:{}".format(df.shape))
-
-    # select impact based on validate accuracy
-    # df = df[df["impact_val_acc"] <= upper_impact]
-    # print("Upperbound for the impact on validation accuracy {}. Shape: {}".format(upper_impact, df.shape))
-
     # write separately because otherwise, got warning: Boolean Series key will be reindexed to match DataFrame index
     df_slct = df[df["Unnamed: 1"] == "origin"]
     df_slct = df_slct[df_slct["ft_val_accuracy"] < lower_threshold]
     model_list = set(df_slct["Unnamed: 0"].unique())
 
     df = df[~df["Unnamed: 0"].isin(model_list)]
-    print("Lowerbound for validation accuracy {}. Shape: {}".format(lower_threshold, df.shape))
+    # print("Lowerbound for validation accuracy {}. Shape: {}".format(lower_threshold, df.shape))
 
     # debug only
     # print("DataFrame:\n", df)
 
-    # spilt features and labels
+    # spilt features (ft_) and labels(lb_)
     features = list(filter(lambda x: x.startswith("ft_"), df.columns))
     labels = list(filter(lambda x: x.startswith("lb_"), df.columns))
     X = df[features]
@@ -197,28 +189,30 @@ if __name__ == '__main__':
         total_acc, total_prec, total_rec, total_fsc = 0, 0, 0, 0
         predictList = np.array(predictList)
         modelPredictList.append(predictList)
-        LABEL_DICT = {
-            0: {"TP": 0, "FN": 0, "FP": 0, "TN": 0, "P": 0, "N": 0},
-            1: {"TP": 0, "FN": 0, "FP": 0, "TN": 0, "P": 0, "N": 0},
-            2: {"TP": 0, "FN": 0, "FP": 0, "TN": 0, "P": 0, "N": 0},
-            3: {"TP": 0, "FN": 0, "FP": 0, "TN": 0, "P": 0, "N": 0},
-            4: {"TP": 0, "FN": 0, "FP": 0, "TN": 0, "P": 0, "N": 0}
-        }
-        for i in range(0, N, iter_num):
+
+        for i in range(iter_num, N, iter_num):
             predict = predictList[:, i:i + iter_num, :]  # shape of predict: [n_classifier, iter, 5]
             predict_sum = np.sum(predict, axis=1)  # shape of predict_sum: [n_classifier, 5]
-            print("working on case: ", i / 9)
-            # WARNING, this line is added to alleviate the training bias problem in the prediction stage,
-            # theoretically, this line should be `predict_sum_shift = predict_sum`
+            print("{}\nWorking on case: ".format("=" * 20, (i / 9)))
+            print("working on subject: ", df["Unnamed: 0"][i])
+
+            # WARNING, this line is added to alleviate the training bias problem in the prediction stage
+            # Theoretically, this line should be `predict_sum_shift = predict_sum`
             predict_sum_shift = predict_sum - np.array([0, 2, 3, 6, 5])
             predict_sum_shift[predict_sum_shift <= 0] = 0
             predict_sum_shift[predict_sum_shift > 0] = 1
 
-            accuracy, precision, recall, FScore, pred_voting = cal_metrics_voting(Y[i], predict_sum_shift,
-                                                                                  LABEL_DICT)  # shape of pred: [n_classifier, 5]
+            pred_voting = cal_metrics_voting(predict_sum_shift)  # shape of pred: [n_classifier, 5]
             # if precision != 0:
             # print(predict_sum)
-            print("the label is: {}, the predicted label is: {}.".format(Y[i], pred_voting))
+            label_name = ['optimizer', 'lr', 'act', 'loss', 'epoch']
 
-            lineLoc(pred_voting, df["Unnamed: 0"][i])
-            print("case end \n")
+            gt_label = np.where(Y[i] == 1)[0]
+            gt_list = []
+            for label_index in gt_label:
+                gt_list.append(label_name[label_index])
+            print("The ground truth faults: {}".format(gt_list))
+
+            # print("the label is: {}, the predicted label is: {}.".format(Y[i], pred_voting))
+            lineLoc(program_dir, dataset_dir, pred_voting, label_name, df["Unnamed: 0"][i])
+            print("case end \n{}\n".format("=" * 20))

@@ -1,18 +1,19 @@
 import os
+import sys
 import shutil
 from pathlib import Path
 
-from SeedFaults.seedFaults import *
+from CodeBook.SeedFaults.seedFaults import *
 from collections import defaultdict
-from Utils.Utils import *
-from Utils.Module import *
+from CodeBook.Utils.Utils import *
+from CodeBook.Utils.Module import *
 import keras
 import keras.optimizers as O
 from keras.models import load_model
 import argparse
 import pickle
 import importlib
-from Config import params
+from CodeBook.Config import params
 from multiprocessing import Process
 from multiprocessing import Pool
 from sklearn.datasets import load_iris
@@ -98,7 +99,7 @@ def parse_train_config(config):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run programs.')
-    parser.add_argument('--base', '-bs', default='./RQ2', help='Base directory. Default: ./RQ2/')
+    parser.add_argument('--base', '-bs', default='./Evaluation', help='Base directory. Default: ./RQ2/')
     parser.add_argument('--dataset', '-ds', default='MNIST', help="Dataset.",
                         # choices=["MNIST", "MNIST2", "CIFAR-10", "Blob", "Circle", "Reuters", "IMDB"]
                         )

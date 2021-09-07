@@ -5,9 +5,9 @@ sys.path.append('.')
 import csv
 import numpy as np
 import keras
-from Utils.Logger import Logger
+from CodeBook.Utils.Logger import Logger
 import keras.backend as K
-import Callbacks.Monitor as mn
+import CodeBook.Callbacks.Monitor as mn
 import pickle
 import time
 from collections import defaultdict

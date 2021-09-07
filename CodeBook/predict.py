@@ -8,4 +8,3 @@ classifierLists = os.listdir("Classifiers")
 classifierLists = ["All"]
 for classifier in classifierLists:
     subprocess.call("python CodeBook/MultiLabelClassification/predictClassifier.py -pd=Benchmark -ds=Subjects -md=Classifiers/{} -thr=0".format(classifier), shell=True)
-    # subprocess.call("python CodeBook/MultiLabelClassification/predictClassifier.py -pd=Evaluations -ds=Subjects -md=Classifiers/{} -thr=0".format(classifier), shell=True)
