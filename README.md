@@ -8,7 +8,7 @@ In particular, it infers the **suspicious fault types** via monitoring the runti
 
 ## Workflow of DeepFD
 
-![workflow](/Users/bella/PycharmProjects/New/DeepFD/Figures/workflow.png)
+![workflow](./Figures/workflow.png)
 
 
 
@@ -34,7 +34,7 @@ After acquiring the diagnosed types of faults, DeepFD performs fault localizatio
 
 ## Diagnosis Model Construction
 
-![model-prep](/Users/bella/PycharmProjects/New/DeepFD/Figures/model-prep.png)
+![model-prep](./Figures/model-prep.png)
 
 ### Step 1: Fault Seeding. 
 
